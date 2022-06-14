@@ -1,0 +1,7 @@
+Create Environment
+conda create --name tri-env python=3.9
+
+Install Required Packages
+pip install 
+
+
