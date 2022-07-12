@@ -1,1 +1,5 @@
 gym
+pybullet
+stable-baselines3
+attrs
+typing

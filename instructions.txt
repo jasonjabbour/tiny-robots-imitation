@@ -2,6 +2,13 @@ Create Environment
 conda create --name tri-env python=3.9
 
 Install Required Packages
-pip install 
+pip install gym
+pip install pybullet
+pip install stable-baselines3
+pip install attrs
+pip install typing
+
+Train
+python run.py --mode train --visualize
 
 
