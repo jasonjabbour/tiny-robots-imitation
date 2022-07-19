@@ -51,7 +51,7 @@ class IMUSensor(sensor.BoxSpaceSensor):
             for channel in self._channels:
                 if channel in ['R', 'P', 'Y']:
                     lower_bound.append(-2.0 * np.pi)
-                    upper_bound.append(-2.0 * np.pi)
+                    upper_bound.append(2.0 * np.pi)
                 elif channel in ['Rcos', 'Rsin', 'Pcos', 'Psin', 'Ycos', 'Ysin']:
                     lower_bound.append(-1.)
                     upper_bound.append(1.)
@@ -85,20 +85,14 @@ class IMUSensor(sensor.BoxSpaceSensor):
 
     def _get_observation(self) -> _ARRAY:
         if self._noisy_reading:
-            # Fix
-            # rpy = self._robot.GetBaseRollPitchYaw()
-            # drpy = self._robot.GetBaseRollPitchYawRate()
-            rpy = drpy = None
-            pass
+            rpy = self._robot.GetBaseRollPitchYaw()
+            #drpy = self._robot.GetBaseRollPitchYawRate()
         else:
-            # Fix
-            # rpy = self._robot.getTrueBaseRollPitchYaw()
-            # drpy = self._robot.getTrueBaseRollPitchYawRate()
-            rpy = drpy = None
-            pass
+            rpy = self._robot.getTrueBaseRollPitchYaw()
+            #drpy = self._robot.getTrueBaseRollPitchYawRate()
         
         assert len(rpy) >=3, rpy
-        assert len(drpy) >=3, drpy
+        #assert len(drpy) >=3, drpy
     
         observations = np.zeros(self._num_channels)
         for i, channel in enumerate(self._channels):
@@ -120,11 +114,11 @@ class IMUSensor(sensor.BoxSpaceSensor):
                 observations[i] = np.cos(rpy[2])
             if channel == "Ysin":
                 observations[i] = np.sin(rpy[2])
-            if channel == "dR":
-                observations[i] = drpy[0]
-            if channel == "dP":
-                observations[i] = drpy[1]
-            if channel == "dY":
-                observations[i] = drpy[2]
+            # if channel == "dR":
+            #     observations[i] = drpy[0]
+            # if channel == "dP":
+            #     observations[i] = drpy[1]
+            # if channel == "dY":
+            #     observations[i] = drpy[2]
         
         return observations

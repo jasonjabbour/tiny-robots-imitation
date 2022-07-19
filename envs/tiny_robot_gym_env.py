@@ -11,8 +11,9 @@ import pybullet
 import pybullet_utils.bullet_client as bullet_client
 import pybullet_data as pd
 
+
 from envs.sensors import sensor
-# Using instead of robot config:
+from envs.utilities import space_utils
 from robots import motor_control_config
 
 _NUM_SIMULATION_ITERATION_STEPS = 300
@@ -127,6 +128,8 @@ class TinyRobotGymEnv(gym.Env):
         self._camera_pitch = gym_config.simulation_parameters.camera_pitch
         self._render_width = gym_config.simulation_parameters.render_width
         self._render_height = gym_config.simulation_parameters.render_height
+
+        # For first time make sure hard reset is true in order to create robot class instance
         self._hard_reset = True
 
         # Call reset to prepare environment
@@ -135,6 +138,13 @@ class TinyRobotGymEnv(gym.Env):
         # Now follow hard reset requirement
         self._hard_reset = gym_config.simulation_parameters.enable_hard_reset
 
+        # Construct the observation space from the list of sensors. Note that we
+        # will reconstruct the observation_space after the robot is created.
+        # NEW, will not include the motor angles in observational space
+        sensors_in_obs = [self.all_sensors()[1]] + [self.all_sensors()[2]]
+        self.observation_space = (
+            space_utils.convert_sensors_to_gym_space_dictionary(
+                sensors_in_obs)) 
     
     def _build_action_space(self):
         """Build action space based on motor control mode"""
@@ -214,7 +224,7 @@ class TinyRobotGymEnv(gym.Env):
             self._pybullet_client.resetSimulation()
             # Set maximum number of constraint solver iterations
             self._pybullet_client.setPhysicsEngineParameter(
-                numSolverIterations=self._num_bullet_solver_iterations)
+               numSolverIterations=self._num_bullet_solver_iterations)
             # Default 240 Hz between each step. 
             # In many cases it is best to leave the default
             # Several parameters must be duned including number of solver iterations and 
@@ -235,9 +245,10 @@ class TinyRobotGymEnv(gym.Env):
             # Rebuild the robot and create the _robot object
             self._robot = self._robot_class(
                 pybullet_client=self._pybullet_client,
+                time_step=self._gym_config.simulation_parameters.sim_time_step_s, 
+                action_repeat=self._gym_config.simulation_parameters.num_action_repeat,
                 sensors=self._sensors, 
                 on_rack=self._on_rack, 
-                action_repeat=self._gym_config.simulation_parameters.num_action_repeat,
                 motor_control_mode=self._gym_config.simulation_parameters.motor_control_mode, 
                 reset_time=self._gym_config.simulation_parameters.reset_time, 
                 enable_clip_motor_commands=self._gym_config.simulation_parameters.enable_clip_motor_commands, 

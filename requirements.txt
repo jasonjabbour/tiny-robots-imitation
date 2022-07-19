@@ -3,3 +3,4 @@ pybullet
 stable-baselines3
 attrs
 typing
+tensorboard

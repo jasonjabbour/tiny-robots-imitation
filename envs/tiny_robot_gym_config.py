@@ -7,8 +7,8 @@ from robots import motor_control_config
 @attr.s
 class SimulationParameters(object):
     """Parameters specific for the pyBullet simulation."""
-    sim_time_step_s = attr.ib(type=float, default=0.001)
-    num_action_repeat = attr.ib(type=int, default=33) 
+    sim_time_step_s = attr.ib(type=float, default=.001)
+    num_action_repeat = attr.ib(type=int, default=33) # must change
     enable_hard_reset = attr.ib(type=bool, default=False)
     enable_rendering = attr.ib(type=bool, default=False)
     enable_rendering_gui = attr.ib(type=bool, default=True)
@@ -25,7 +25,7 @@ class SimulationParameters(object):
     enable_action_filter = attr.ib(type=bool, default=False)
     enable_action_interpolation = attr.ib(type=bool, default=False)
     allow_knee_contact = attr.ib(type=bool, default=False)
-    enable_clip_motor_commands = attr.ib(type=bool, default=True)
+    enable_clip_motor_commands = attr.ib(type=bool, default=False)
     dead_zone = attr.ib(type=bool, default=True)
 
 @attr.s

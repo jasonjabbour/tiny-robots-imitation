@@ -7,6 +7,7 @@ pip install pybullet
 pip install stable-baselines3
 pip install attrs
 pip install typing
+pip install tensorboard
 
 Train
 python run.py --mode train --visualize

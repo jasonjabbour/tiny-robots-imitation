@@ -10,7 +10,7 @@ from envs import env_builder
 
 ENABLE_ENV_RANDOMIZER = True
 NUM_ENV = 8
-POLICY_NUM = 1
+POLICY_NUM = 2
 
 def build_model(env, output_dir):
     '''Initialize PPO Stable-baselines 3 Model'''
@@ -20,14 +20,15 @@ def build_model(env, output_dir):
                 verbose=1, #Output Info during training
                 gamma=.95, #Discount Factor
                 n_epochs = 1, #Number of epoch when optimizing surrogate loss
-                tensorboard_log=output_dir+'/Policy'+str(POLICY_NUM)+'/log')
+                tensorboard_log=output_dir+'/AllPolicy'+str(POLICY_NUM)+'/log')
 
     return model 
 
 
-def train(env, total_timesteps):
-    pass
-
+def train(env, model, total_timesteps, output_dir):
+    model.learn(total_timesteps=total_timesteps)
+    model.save(output_dir+'/AllPolicy'+str(POLICY_NUM)+'/policy'+str(POLICY_NUM))
+    env.close()
 
 def main():
     #Input commands
@@ -65,11 +66,12 @@ def main():
                             output_dir=args.output_dir)
 
         #Start RL Training Process
-        train(env=env,
-            total_timesteps=args.total_timesteps)
+        train(env=env, model=model,
+              total_timesteps=args.total_timesteps, 
+              output_dir=args.output_dir)
 
     elif args.mode == 'calibrate':
-        calibrate_robot.calibrate_robot(robot)
+        calibrate_robot.calibrate_robot(robot_name)
 
 if __name__ == '__main__':
     main()
